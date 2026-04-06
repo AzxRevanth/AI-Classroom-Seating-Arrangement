@@ -9,8 +9,8 @@ function loadDemo() {
 }
 
 function showPage(id) {
-  document.getElementById("page-input").style.display = id === "input" ? "" : "none";
-  document.getElementById("page-result").style.display = id === "result" ? "" : "none";
+  document.getElementById("page-input").style.display = id === "input" ? "block" : "none";
+  document.getElementById("page-result").style.display = id === "result" ? "block" : "none";
 }
 
 function renderRow(containerId, students) {
@@ -38,8 +38,7 @@ function renderExplanations(items) {
 async function generate() {
   const text = document.getElementById("constraints").value.trim();
   const btn = document.getElementById("btn-generate");
-  btn.textContent = "Thinking…";
-  btn.disabled = true;
+  if (btn) { btn.textContent = "Thinking…"; btn.disabled = true; }
 
   try {
     const res = await fetch("/generate", {
@@ -61,7 +60,6 @@ async function generate() {
   } catch (err) {
     alert("Error: " + err.message);
   } finally {
-    btn.textContent = "Generate Seating";
-    btn.disabled = false;
+    if (btn) { btn.textContent = "Generate Seating"; btn.disabled = false; }
   }
 }
