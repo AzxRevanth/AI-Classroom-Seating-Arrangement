@@ -1,4 +1,5 @@
 import re
+import os
 import random
 from flask import Flask, render_template, request, jsonify
 
@@ -128,4 +129,4 @@ def generate():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
