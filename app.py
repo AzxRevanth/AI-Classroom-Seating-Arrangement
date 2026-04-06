@@ -65,7 +65,7 @@ def calc_score(arr, constraints):
     return penalty
 
 
-def hill_climb(constraints, iterations=1000):
+def hill_climb(constraints, iterations=200):
     best = random.sample(STUDENTS, len(STUDENTS))
     best_score = calc_score(best, constraints)
     for _ in range(iterations):
@@ -75,7 +75,7 @@ def hill_climb(constraints, iterations=1000):
         s = calc_score(candidate, constraints)
         if s <= best_score:
             best, best_score = candidate, s
-        if best_score == 0:
+        if best_score <= 1:
             break
     return best, best_score
 
