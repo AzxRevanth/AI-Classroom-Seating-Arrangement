@@ -25,7 +25,7 @@ Then open `http://localhost:10000`
 
 ## Deploy
 
-Hosted on [Render](https://render.com). Any push to the connected GitHub repo auto-deploys.
+Hosted on [Render]([https://render.com](https://ai-classroom-seating-arrangement.onrender.com/)). Any push to the connected GitHub repo auto-deploys.
 
 ## Stack
 
