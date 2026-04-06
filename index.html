@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Classroom Seat Planner</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <h1>🏫 Classroom Seat Planner</h1>
+    <p>Enter constraints in plain English — the AI finds the best arrangement.</p>
+  </header>
+
+  <!-- PAGE 1: INPUT -->
+  <div id="page-input">
+    <div class="card">
+      <div class="hints">
+        <span class="hint">A and B are friends</span>
+        <span class="hint">A and D are not friends</span>
+        <span class="hint">C wants front</span>
+        <span class="hint">E wants back</span>
+        <span class="hint">F needs teacher visibility</span>
+        <span class="hint">G is normal</span>
+      </div>
+      <label for="constraints">Constraints (one per line)</label>
+      <textarea id="constraints" placeholder="A and B are friends&#10;C wants front&#10;..."></textarea>
+      <div class="actions">
+        <button class="btn-primary" id="btn-generate" onclick="generate()">Generate Seating</button>
+        <button class="btn-secondary" onclick="loadDemo()">Load Demo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 2: RESULT -->
+  <div id="page-result">
+    <div class="result-top">
+      <h2>Seating Arrangement</h2>
+      <div style="display:flex; gap:.5rem; align-items:center;">
+        <span class="score-tag" id="score-tag">Score: —</span>
+        <button class="btn-secondary" onclick="showPage('input')">← Edit</button>
+        <button class="btn-primary" onclick="generate()">↻ Regenerate</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="classroom">
+        <div class="teacher-box">📋 Teacher (T)</div>
+        <div>
+          <div class="row-label">Front Row</div>
+          <div class="seat-row" id="front-row"></div>
+        </div>
+        <div>
+          <div class="row-label">Back Row</div>
+          <div class="seat-row" id="back-row"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <label style="margin-bottom:.75rem; display:block;">Constraint Results</label>
+      <div class="exp-list" id="explanations"></div>
+    </div>
+  </div>
+
+</div>
+<script src="/static/script.js"></script>
+</body>
+</html>
