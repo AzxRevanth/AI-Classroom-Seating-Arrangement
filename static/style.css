@@ -99,16 +99,28 @@ button {
   color: #1e2e25;
 }
 .row-label { font-size: .72rem; color: #8a9e8d; margin-bottom: .3rem; text-align: center; }
-.seat-row { display: flex; gap: .5rem; }
+.seat-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: .5rem;
+  width: 100%;
+  max-width: 420px;
+}
 .seat {
-  width: 64px; height: 64px;
+  width: 100%;
+  aspect-ratio: 1;
   background: #c8b99a;
   border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 1.4rem;
+  font-size: 1.1rem;
   font-weight: bold;
   color: #1e2e25;
   box-shadow: 0 4px 0 #a89070;
+}
+.seat.empty {
+  background: rgba(255,255,255,.04);
+  box-shadow: none;
+  border: 1px dashed rgba(255,255,255,.1);
 }
 
 /* Explanations */

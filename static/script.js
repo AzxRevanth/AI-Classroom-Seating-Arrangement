@@ -13,9 +13,15 @@ function showPage(id) {
   document.getElementById("page-result").style.display = id === "result" ? "block" : "none";
 }
 
-function renderRow(containerId, students) {
-  const el = document.getElementById(containerId);
-  el.innerHTML = students.map(s => `<div class="seat">${s}</div>`).join("");
+function renderGrid(grid) {
+  const el = document.getElementById("seat-grid");
+  const rowLabels = ["Front", "Row 2", "Row 3", "Row 4", "Back"];
+  el.innerHTML = grid.flatMap((row, ri) =>
+    row.map((s, ci) => s
+      ? `<div class="seat" title="${rowLabels[ri]} · Seat ${ri * row.length + ci + 1}">${s}</div>`
+      : `<div class="seat empty"></div>`
+    )
+  ).join("");
 }
 
 function renderExplanations(items) {
@@ -48,8 +54,7 @@ async function generate() {
     });
     const data = await res.json();
 
-    renderRow("front-row", data.grid[0]);
-    renderRow("back-row", data.grid[1]);
+    renderGrid(data.grid);
     renderExplanations(data.explanations);
 
     const tag = document.getElementById("score-tag");

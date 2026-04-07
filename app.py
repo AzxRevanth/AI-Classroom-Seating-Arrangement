@@ -5,7 +5,7 @@ from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
 
-STUDENTS = list("ABCDEFGHIJ")
+STUDENTS = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
 
 def parse_constraints(text):
@@ -14,7 +14,7 @@ def parse_constraints(text):
         low = line.strip().lower()
         if not low:
             continue
-        names = [s.upper() for s in re.findall(r'\b([a-j])\b', low)]
+        names = [s.upper() for s in re.findall(r'\b([a-z])\b', low)]
 
         if "not friend" in low and len(names) >= 2:
             constraints.append({"type": "not_friends", "students": names[:2]})
@@ -35,9 +35,14 @@ def parse_constraints(text):
     return constraints
 
 
+COLS = 6
+ROWS = 5
+TOTAL_SEATS = COLS * ROWS  # 30, last 4 empty
+
+
 def adjacent(i, j):
-    ri, ci = divmod(i, 5)
-    rj, cj = divmod(j, 5)
+    ri, ci = divmod(i, COLS)
+    rj, cj = divmod(j, COLS)
     return abs(ri - rj) + abs(ci - cj) == 1
 
 
@@ -54,13 +59,13 @@ def calc_score(arr, constraints):
             if a in arr and b in arr and adjacent(arr.index(a), arr.index(b)):
                 penalty += 5
         elif t == "front":
-            if s[0] in arr and arr.index(s[0]) >= 5:
+            if s[0] in arr and arr.index(s[0]) >= COLS:
                 penalty += 4
         elif t == "back":
-            if s[0] in arr and arr.index(s[0]) < 5:
+            if s[0] in arr and arr.index(s[0]) < (ROWS - 1) * COLS:
                 penalty += 4
         elif t == "teacher_visibility":
-            if s[0] in arr and arr.index(s[0]) >= 5:
+            if s[0] in arr and arr.index(s[0]) >= COLS:
                 penalty += 3
     return penalty
 
@@ -70,7 +75,7 @@ def hill_climb(constraints, iterations=200):
     best_score = calc_score(best, constraints)
     for _ in range(iterations):
         candidate = best[:]
-        i, j = random.sample(range(10), 2)
+        i, j = random.sample(range(len(STUDENTS)), 2)
         candidate[i], candidate[j] = candidate[j], candidate[i]
         s = calc_score(candidate, constraints)
         if s <= best_score:
@@ -95,15 +100,15 @@ def explain(arr, constraints):
             results.append({"text": f"{a} and {b} are not friends", "satisfied": sat,
                              "detail": "seated apart" if sat else "seated adjacent (conflict)"})
         elif t == "front":
-            sat = s[0] in arr and arr.index(s[0]) < 5
+            sat = s[0] in arr and arr.index(s[0]) < COLS
             results.append({"text": f"{s[0]} wants front", "satisfied": sat,
-                             "detail": "in front row" if sat else "in back row"})
+                             "detail": "in front row" if sat else "not in front row"})
         elif t == "back":
-            sat = s[0] in arr and arr.index(s[0]) >= 5
+            sat = s[0] in arr and arr.index(s[0]) >= (ROWS - 1) * COLS
             results.append({"text": f"{s[0]} wants back", "satisfied": sat,
-                             "detail": "in back row" if sat else "in front row"})
+                             "detail": "in back row" if sat else "not in back row"})
         elif t == "teacher_visibility":
-            sat = s[0] in arr and arr.index(s[0]) < 5
+            sat = s[0] in arr and arr.index(s[0]) < COLS
             results.append({"text": f"{s[0]} needs teacher visibility", "satisfied": sat,
                              "detail": "in front row" if sat else "in back row"})
         elif t == "normal":
@@ -121,8 +126,12 @@ def generate():
     data = request.get_json(force=True)
     constraints = parse_constraints(data.get("constraints", ""))
     arr, final_score = hill_climb(constraints)
+    # Build 5 rows x 6 cols grid; pad with "" for empty seats
+    padded = arr + [""] * (TOTAL_SEATS - len(arr))
+    grid = [padded[r * COLS:(r + 1) * COLS] for r in range(ROWS)]
     return jsonify({
-        "grid": [arr[:5], arr[5:]],
+        "grid": grid,
+        "cols": COLS,
         "score": final_score,
         "explanations": explain(arr, constraints)
     })
